@@ -1,3 +1,8 @@
+coverage
 detect-secrets
 flake8
+flask
 pre-commit
+pytest
+pytest-mock
+pytest-xdist
