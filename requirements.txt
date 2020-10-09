@@ -1,0 +1,3 @@
+detect-secrets
+flake8
+pre-commit
