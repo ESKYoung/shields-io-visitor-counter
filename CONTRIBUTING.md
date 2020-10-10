@@ -17,10 +17,16 @@ Please read [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) before contributing to 
 To contribute to this code, please make sure your system meets the following requirements:
 
 - Unix-like operating system (macOS, Linux, …);
-- [`direnv`](https://direnv.net/) installed, including shell hooks;
-- [`.envrc`](/.envrc) allowed/trusted by `direnv` to use the environment variables;
-- Python 3.5 or above; and
+- Load environment variables from [`.envrc`](/.envrc);
+- Python 3.6 or above; and
 - Python packages [installed](#installing-python-packages) from the [`requirements.txt`](./requirements.txt) file.
+
+We recommend installing [`direnv`](https://direnv.net/), and its shell hooks to load environment variables from
+[`.envrc`](/.envrc). You can manually do so each time by sourcing the file in your terminal:
+
+```
+. ./.envrc
+```
 
 ### Installing Python packages
 
@@ -49,3 +55,15 @@ information.
 [support]: mailto:eskyoung.github@gmail.com?subject=Support
 [pre-commit]: https://pre-commit.com
 [detect-secrets]: https://github.com/Yelp/detect-secrets
+
+## Deployment
+
+This application is deployed on Heroku at [https://shields-io-visitor-counter.herokuapp.com][application]
+automatically by Travis CI.
+
+By default, Travis CI will only deploy commits with Git tags. We work on the assumption that tags are also releases, so
+Git tags are only applied for releases, and vice versa. Tags/releases are named according to [semantic
+versioning][semver].
+
+[application]: https://shields-io-visitor-counter.herokuapp.com
+[semver]: https://semver.org/

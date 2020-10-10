@@ -30,3 +30,11 @@ script:
 
 after_success:
   - codecov
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: uHJfkGREIembGxjhiRWdZBOffyW+lYTaZlOYEYcETzOUW27zJUaTviNBRTWSVVbGJ6QM/8qu7iW7BwWEddsRAmoKEU5W/OXn3Ye8aFjnbKd99XzsnIbwbc5cpUEUoYfILGnpPkTMZr0I03vHr7BmyIWHUsMFEf1s9eXeYidZgwO5Ji2LBCXmOVYDaxB8XiX/haB/Z/ymqRsoNiYL9twPsMZPj6kjLAsHsRF86bx2kJbqUL+1FA+hcB2ZUPZ3XCsSwTxWPcnqYYDk3yz3kqYaFOK92wYCmlqXj6BGe6xLNNmmKwYKRt0wkdxl4BIqbKt/Hy5Ed7HPWhS2BTk4nzqGBNU74oeQRqj2EhvNJTO00G2fTTyzKVmOy25LXzkGxKJ/xvPkmpBul6wi81L1rjIJHl/7DpJ4mjPW/B1TlNuc3u/HBheLsxTEhfwJz7bX/MuPrn/dweQ5YN52LU43IPKQ1ePoZTM0LuAAbqdsjdApe1zZKg+wDNk+QSXAReabzLWa2x19dwhxm5zlwXpkEU9urFKKgUCww0YCPU+fAfdAJWfZ3zS4/LlMpstoDGtDF9JaSBMwYCdd6p9O0NTe1Z2l3MtCRuokNH3H+wfUV1K45hmS0YyA5lpsrcUSzaThMAYResmhrnz1BzBenJuSLjAKm7B8rpqrQmRn0uL2ahvMXeU=  # pragma: allowlist secret
+  on:
+    all_branches: true
+    tags: true
