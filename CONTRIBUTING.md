@@ -17,10 +17,16 @@ Please read [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) before contributing to 
 To contribute to this code, please make sure your system meets the following requirements:
 
 - Unix-like operating system (macOS, Linux, …);
-- [`direnv`](https://direnv.net/) installed, including shell hooks;
-- [`.envrc`](/.envrc) allowed/trusted by `direnv` to use the environment variables;
-- Python 3.5 or above; and
+- Load environment variables from [`.envrc`](/.envrc);
+- Python 3.6 or above; and
 - Python packages [installed](#installing-python-packages) from the [`requirements.txt`](./requirements.txt) file.
+
+We recommend installing [`direnv`](https://direnv.net/), and its shell hooks to load environment variables from
+[`.envrc`](/.envrc). You can manually do so each time by sourcing the file in your terminal:
+
+```
+. ./.envrc
+```
 
 ### Installing Python packages
 

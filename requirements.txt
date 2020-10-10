@@ -2,6 +2,7 @@ coverage
 detect-secrets
 flake8
 flask
+gunicorn
 pre-commit
 pytest
 pytest-mock
