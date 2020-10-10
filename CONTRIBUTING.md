@@ -55,3 +55,15 @@ information.
 [support]: mailto:eskyoung.github@gmail.com?subject=Support
 [pre-commit]: https://pre-commit.com
 [detect-secrets]: https://github.com/Yelp/detect-secrets
+
+## Deployment
+
+This application is deployed on Heroku at [https://shields-io-visitor-counter.herokuapp.com][application]
+automatically by Travis CI.
+
+By default, Travis CI will only deploy commits with Git tags. We work on the assumption that tags are also releases, so
+Git tags are only applied for releases, and vice versa. Tags/releases are named according to [semantic
+versioning][semver].
+
+[application]: https://shields-io-visitor-counter.herokuapp.com
+[semver]: https://semver.org/
