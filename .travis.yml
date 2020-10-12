@@ -1,28 +1,39 @@
 language: python
 
-os:
-  - linux
-
-python:
-  - "3.6"
-  - "3.7"
-  - "3.8"
-  - "3.9-dev"
-  - "nightly"
+jobs:
+  include:
+    - os: linux
+      python: "3.6"
+    - os: linux
+      python: "3.7"
+    - os: linux
+      python: "3.8"
+    - os: linux
+      python: "3.9-dev"
+    - os: linux
+      python: "nightly"
+    - name: "Python 3.7.7 on macOS 10.14"
+      os: osx
+      osx_image: xcode11.2
+      language: shell
+    - name: "Python 3.8.5 on macOS 10.14"
+      os: osx
+      osx_image: xcode12.2
+      language: shell
 
 addons:
   apt:
-    packages:
-      - direnv
+    packages: direnv
+  homebrew:
+    packages: direnv
 
 before_install:
-  - if [ $TRAVIS_OS_NAME = linux ]; then sudo apt-get install direnv                        ; fi
-  - if [ $TRAVIS_OS_NAME = linux ]; then echo 'eval "$(direnv hook bash)"' > ~/.bashrc      ; fi
+  - sh ./.travis/before_install.sh
 
 install:
   - direnv allow
   - make requirements
-  - pip install codecov
+  - pip3 install codecov
 
 script:
   - coverage run -m pytest
