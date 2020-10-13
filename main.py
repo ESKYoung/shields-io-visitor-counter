@@ -1,11 +1,14 @@
 from flask import Flask, redirect
+from typing import Optional
 import hashlib
 import os
+import requests
 import werkzeug
 
 # Import environmental variables
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
 HASH_KEY = os.getenv("HASH_KEY")
+URL_COUNTAPI = os.getenv("URL_COUNTAPI")
 
 # Initialise the flask app
 app = Flask(__name__)
@@ -42,6 +45,32 @@ def get_page_hash(page: str) -> str:
 
     # Return the hashed key
     return obj_hash.hexdigest()
+
+
+def get_page_count(key: str) -> Optional[int]:
+    """Get the page count using a CountAPI.
+
+    Args:
+        key: A string as a unique key for the URL_COUNTER CountAPI URL.
+
+    Returns:
+        An integer count if CountAPI is called correctly, otherwise None.
+
+    """
+
+    try:
+
+        # Get the count from CountAPI
+        countapi_response = requests.get(f"{URL_COUNTAPI}/{key}")
+
+        # Check a correct return is supplied
+        if countapi_response and countapi_response.status_code == 200:
+            return countapi_response.json()["value"]
+        else:
+            return None
+
+    except Exception:
+        return None
 
 
 if __name__ == '__main__':

@@ -1,9 +1,14 @@
-from main import app, get_page_hash, redirect_to_github_repository
+from hypothesis import example, given
+from hypothesis.strategies import text
+from main import app, get_page_count, get_page_hash, redirect_to_github_repository
+from typing import Any
+from unittest.mock import MagicMock
 import os
 import pytest
 
 # Import environmental variables
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
+URL_COUNTAPI = os.getenv("URL_COUNTAPI")
 
 
 class TestRedirectToGithubRepository:
@@ -45,3 +50,81 @@ def test_get_page_hash_returns_correctly(mocker, test_input_page: str, test_inpu
     _ = mocker.patch("main.HASH_KEY", test_input_hash)
 
     assert get_page_hash(test_input_page) == test_expected
+
+
+@given(test_input=text())
+def test_get_page_count_calls_countapi_correctly(patch_requests_get: MagicMock, test_input: str) -> None:
+    """Test get_page_count calls CountAPI correctly."""
+
+    # Call the get_page_count function
+    _ = get_page_count(test_input)
+
+    # Assert the requests.get function is called once with the correct argument
+    patch_requests_get.assert_called_with("{}/{}".format(URL_COUNTAPI, test_input))
+
+
+def mock_requests_get(*args: Any) -> object:
+    """Side effect function to mock the requests.get function.
+
+    Based on this StackOverflow answer: https://stackoverflow.com/a/28507806.
+
+    Args:
+        *args: A list of arguments, where the first argument is the URL containing the URL_SHIELDS_IO environmental
+          variable with an additional URL stub.
+
+    Returns:
+        The class MockResponse, which has the attributes json_data, and status_code, and the method json that returns
+        json_data. If the URL stub is "", json_data will be None, and status_code will be 404, otherwise they will be
+        {"value": 100}, and 200.
+
+    """
+
+    class MockResponse:
+
+        def __init__(self, json_data, status_code):
+            """Mock the json_data and status_code attributes, and json method of the requests.get function.
+
+            Args:
+                json_data: A mock JSON return.
+                status_code: A mock HTTP status code.
+
+            """
+            self.json_data = json_data
+            self.status_code = status_code
+
+        def json(self):
+            """Mock the json method of the requests.get function.
+
+            Returns:
+                Returns the json_data attribute.
+
+            """
+            return self.json_data
+
+    # Define the MockResponse attributes if the URL stub is "" or otherwise
+    if args[0] != f"{URL_COUNTAPI}/":
+        return MockResponse({"value": 100}, 200)
+    else:
+        return MockResponse(None, 404)
+
+
+@given(test_input=text())
+@example(test_input="")
+def test_get_page_count_returns_correctly_with_working_countapi(patch_requests_get: MagicMock, test_input: str) -> None:
+    """Test get_page_count returns the correct counts if the CountAPI is working correctly."""
+
+    # Add a side effect to the requests.get function patch
+    patch_requests_get.side_effect = mock_requests_get
+
+    # Call the get_page_count function, and assert the returned value is correct
+    assert (100 if test_input else None) == get_page_count(test_input)
+
+
+def test_get_page_count_returns_correctly_with_failing_countapi(patch_requests_get: MagicMock) -> None:
+    """Test get_page_count returns correctly with a failing CountAPI response."""
+
+    # dd a side effect to the requests.get function patch
+    patch_requests_get.side_effect = Exception()
+
+    # Call the get_page_count function returns None if request.get raises an exception
+    assert get_page_count("test_key") is None
