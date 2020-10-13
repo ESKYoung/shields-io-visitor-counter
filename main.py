@@ -1,5 +1,5 @@
 from flask import Flask, redirect
-from typing import Optional
+from typing import Dict, Optional
 import hashlib
 import os
 import requests
@@ -9,6 +9,7 @@ import werkzeug
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
 HASH_KEY = os.getenv("HASH_KEY")
 URL_COUNTAPI = os.getenv("URL_COUNTAPI")
+URL_SHIELDS_IO = os.getenv("URL_SHIELDS_IO")
 
 # Initialise the flask app
 app = Flask(__name__)
@@ -71,6 +72,30 @@ def get_page_count(key: str) -> Optional[int]:
 
     except Exception:
         return None
+
+
+def compile_shields_io_url(label: str, message: str, color: str, **kwargs: Dict[str, str]) -> str:
+    """Create a Shields.IO API URL to generate a static badge.
+
+    Args:
+        label: A string for the label of the shield.
+        message: A string for the message of the shield.
+        color: A hex color string for the message background.
+        **kwargs: Any optional keyword arguments, where the key-value pairs are acceptable as Shields.IO parameters
+          for a static badge - see https://shields.io/#styles for further information.
+
+    Returns:
+        A Shields.IO API URL string to generate a static badge.
+
+    """
+
+    # If query is not empty, compile the query strings together. For a single query return '?<<<query>>>',
+    # for multiple query strings return '?' followed by each string delimited by &. If query is empty, return a blank
+    # string
+    compiled_query_string = "?{}".format("&".join(f"{k}={v}" for k, v in kwargs.items())) if kwargs else ""
+
+    # Return the compiled Shields.IO URL string
+    return f"{URL_SHIELDS_IO}/{label}-{message}-{color}{compiled_query_string}"
 
 
 if __name__ == '__main__':

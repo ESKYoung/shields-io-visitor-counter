@@ -1,7 +1,7 @@
 from hypothesis import example, given
-from hypothesis.strategies import text
-from main import app, get_page_count, get_page_hash, redirect_to_github_repository
-from typing import Any
+from hypothesis.strategies import dictionaries, text
+from main import app, compile_shields_io_url, get_page_count, get_page_hash, redirect_to_github_repository
+from typing import Any, Dict
 from unittest.mock import MagicMock
 import os
 import pytest
@@ -9,6 +9,7 @@ import pytest
 # Import environmental variables
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
 URL_COUNTAPI = os.getenv("URL_COUNTAPI")
+URL_SHIELDS_IO = os.getenv("URL_SHIELDS_IO")
 
 
 class TestRedirectToGithubRepository:
@@ -128,3 +129,25 @@ def test_get_page_count_returns_correctly_with_failing_countapi(patch_requests_g
 
     # Call the get_page_count function returns None if request.get raises an exception
     assert get_page_count("test_key") is None
+
+
+@given(test_input_label=text(), test_input_message=text(), test_input_color=text(),
+       test_input_kwargs=dictionaries(text(), text()))
+@example(test_input_label=text(), test_input_message=text(), test_input_color=text(), test_input_kwargs={})
+def test_compile_shields_io_url_returns_correctly(test_input_label: str, test_input_message: str,
+                                                  test_input_color: str, test_input_kwargs: Dict[str, str]) -> None:
+    """Test compile_shields_io_url returns the correct string."""
+
+    # Compile the query string, depending if test_input_kwargs is an empty dictionary or not
+    if test_input_kwargs:
+        compiled_query_string = "?{}".format("&".join(f"{k}={v}" for k, v in test_input_kwargs.items()))
+    else:
+        compiled_query_string = ""
+
+    # Generate the expected URL string
+    test_expected = f"{URL_SHIELDS_IO}/{test_input_label}-{test_input_message}-{test_input_color}" \
+                    f"{compiled_query_string}"
+
+    # Assert that the actual string is the same as the expected on
+    assert test_expected == compile_shields_io_url(test_input_label, test_input_message, test_input_color,
+                                                   **test_input_kwargs)
