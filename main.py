@@ -1,5 +1,6 @@
 from flask import Flask, redirect
 from typing import Dict, Optional
+from urllib.parse import urljoin
 import hashlib
 import os
 import requests
@@ -62,7 +63,7 @@ def get_page_count(key: str) -> Optional[int]:
     try:
 
         # Get the count from CountAPI
-        countapi_response = requests.get(f"{URL_COUNTAPI}/{key}")
+        countapi_response = requests.get(urljoin(URL_COUNTAPI, key))
 
         # Check a correct return is supplied
         if countapi_response and countapi_response.status_code == 200:
@@ -95,7 +96,7 @@ def compile_shields_io_url(label: str, message: str, color: str, **kwargs: Dict[
     compiled_query_string = "?{}".format("&".join(f"{k}={v}" for k, v in kwargs.items())) if kwargs else ""
 
     # Return the compiled Shields.IO URL string
-    return f"{URL_SHIELDS_IO}/{label}-{message}-{color}{compiled_query_string}"
+    return urljoin(URL_SHIELDS_IO, f"{label}-{message}-{color}{compiled_query_string}")
 
 
 if __name__ == '__main__':

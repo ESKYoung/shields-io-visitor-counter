@@ -1,8 +1,9 @@
 from hypothesis import example, given
-from hypothesis.strategies import dictionaries, text
+from hypothesis.strategies import characters, dictionaries, one_of, text
 from main import app, compile_shields_io_url, get_page_count, get_page_hash, redirect_to_github_repository
 from typing import Any, Dict
 from unittest.mock import MagicMock
+from urllib.parse import urljoin
 import os
 import pytest
 
@@ -14,7 +15,7 @@ URL_SHIELDS_IO = os.getenv("URL_SHIELDS_IO")
 
 class TestRedirectToGithubRepository:
 
-    def test_flask_redirect_called_correctly(self, patch_flask_redirect):
+    def test_flask_redirect_called_correctly(self, patch_flask_redirect: MagicMock) -> None:
         """Test flask.redirect is called in the redirect_to_github_repository function with the correct arguments."""
 
         # Get the / page of the app
@@ -23,7 +24,7 @@ class TestRedirectToGithubRepository:
         # Assert flask.redirect is called with the correct arguments
         patch_flask_redirect.assert_called_once_with(GITHUB_REPOSITORY, code=302)
 
-    def test_returns_correctly(self, patch_flask_redirect):
+    def test_returns_correctly(self, patch_flask_redirect: MagicMock) -> None:
         """Test the redirect_to_github_repository function returns correctly."""
 
         # Get the / page of the app
@@ -61,7 +62,7 @@ def test_get_page_count_calls_countapi_correctly(patch_requests_get: MagicMock, 
     _ = get_page_count(test_input)
 
     # Assert the requests.get function is called once with the correct argument
-    patch_requests_get.assert_called_with("{}/{}".format(URL_COUNTAPI, test_input))
+    patch_requests_get.assert_called_with(urljoin(URL_COUNTAPI, test_input))
 
 
 def mock_requests_get(*args: Any) -> object:
@@ -103,14 +104,13 @@ def mock_requests_get(*args: Any) -> object:
             return self.json_data
 
     # Define the MockResponse attributes if the URL stub is "" or otherwise
-    if args[0] != f"{URL_COUNTAPI}/":
+    if urljoin(URL_COUNTAPI, args[0]) != URL_COUNTAPI:
         return MockResponse({"value": 100}, 200)
     else:
         return MockResponse(None, 404)
 
 
-@given(test_input=text())
-@example(test_input="")
+@given(test_input=one_of(characters(whitelist_categories="P"), text()))
 def test_get_page_count_returns_correctly_with_working_countapi(patch_requests_get: MagicMock, test_input: str) -> None:
     """Test get_page_count returns the correct counts if the CountAPI is working correctly."""
 
@@ -118,7 +118,7 @@ def test_get_page_count_returns_correctly_with_working_countapi(patch_requests_g
     patch_requests_get.side_effect = mock_requests_get
 
     # Call the get_page_count function, and assert the returned value is correct
-    assert (100 if test_input else None) == get_page_count(test_input)
+    assert get_page_count(test_input) == (100 if urljoin(URL_COUNTAPI, test_input) != URL_COUNTAPI else None)
 
 
 def test_get_page_count_returns_correctly_with_failing_countapi(patch_requests_get: MagicMock) -> None:
@@ -133,7 +133,7 @@ def test_get_page_count_returns_correctly_with_failing_countapi(patch_requests_g
 
 @given(test_input_label=text(), test_input_message=text(), test_input_color=text(),
        test_input_kwargs=dictionaries(text(), text()))
-@example(test_input_label=text(), test_input_message=text(), test_input_color=text(), test_input_kwargs={})
+@example(test_input_label="label", test_input_message="message", test_input_color="color", test_input_kwargs={})
 def test_compile_shields_io_url_returns_correctly(test_input_label: str, test_input_message: str,
                                                   test_input_color: str, test_input_kwargs: Dict[str, str]) -> None:
     """Test compile_shields_io_url returns the correct string."""
@@ -145,8 +145,8 @@ def test_compile_shields_io_url_returns_correctly(test_input_label: str, test_in
         compiled_query_string = ""
 
     # Generate the expected URL string
-    test_expected = f"{URL_SHIELDS_IO}/{test_input_label}-{test_input_message}-{test_input_color}" \
-                    f"{compiled_query_string}"
+    test_expected = urljoin(URL_SHIELDS_IO, f"{test_input_label}-{test_input_message}-{test_input_color}"
+                                            f"{compiled_query_string}")
 
     # Assert that the actual string is the same as the expected on
     assert test_expected == compile_shields_io_url(test_input_label, test_input_message, test_input_color,
