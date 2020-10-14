@@ -1,5 +1,6 @@
 from flask import Flask, redirect
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
+from urllib.parse import SplitResult, quote, urlsplit, urlunsplit
 import hashlib
 import os
 import requests
@@ -8,8 +9,8 @@ import werkzeug
 # Import environmental variables
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
 HASH_KEY = os.getenv("HASH_KEY")
-URL_COUNTAPI = os.getenv("URL_COUNTAPI")
-URL_SHIELDS_IO = os.getenv("URL_SHIELDS_IO")
+URL_COUNTAPI = os.getenv("URL_COUNTAPI").rstrip("/")
+URL_SHIELDS_IO = os.getenv("URL_SHIELDS_IO").rstrip("/")
 
 # Initialise the flask app
 app = Flask(__name__)
@@ -48,6 +49,16 @@ def get_page_hash(page: str) -> str:
     return obj_hash.hexdigest()
 
 
+def combine_url_and_query(url: Union[str, SplitResult], query: str) -> str:
+    """Combine a ParseResult object with a query string to form a full URL, quoting any part of the query."""
+
+    # Get the URL components, if it is a string
+    url_components = url if isinstance(url, SplitResult) else urlsplit(url)
+
+    # Quote the query string, set it to the url query attribute, and return the url as a complete string
+    return urlunsplit(url_components._replace(query=quote(query)))
+
+
 def get_page_count(key: str) -> Optional[int]:
     """Get the page count using a CountAPI.
 
@@ -62,7 +73,7 @@ def get_page_count(key: str) -> Optional[int]:
     try:
 
         # Get the count from CountAPI
-        countapi_response = requests.get(f"{URL_COUNTAPI}/{key}")
+        countapi_response = requests.get(combine_url_and_query(URL_COUNTAPI, key))
 
         # Check a correct return is supplied
         if countapi_response and countapi_response.status_code == 200:
@@ -92,10 +103,10 @@ def compile_shields_io_url(label: str, message: str, color: str, **kwargs: Dict[
     # If query is not empty, compile the query strings together. For a single query return '?<<<query>>>',
     # for multiple query strings return '?' followed by each string delimited by &. If query is empty, return a blank
     # string
-    compiled_query_string = "?{}".format("&".join(f"{k}={v}" for k, v in kwargs.items())) if kwargs else ""
+    compiled_query_string = "&".join(f"{k}={v}" for k, v in kwargs.items()) if kwargs else ""
 
     # Return the compiled Shields.IO URL string
-    return f"{URL_SHIELDS_IO}/{label}-{message}-{color}{compiled_query_string}"
+    return combine_url_and_query(f"{URL_SHIELDS_IO}/{label}-{message}-{color}", compiled_query_string)
 
 
 if __name__ == '__main__':
