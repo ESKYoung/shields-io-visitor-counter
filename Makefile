@@ -1,6 +1,10 @@
-.PHONY: requirements help
+.PHONY: dotenv help requirements
 
 .DEFAULT_GOAL := help
+
+## Create a .env file from .envrc
+dotenv:
+	@sed -n 's/^export \(.*\)$$/\1/p' .envrc > .env
 
 ## Install the Python requirements, and set up pre-commit hooks
 requirements:
