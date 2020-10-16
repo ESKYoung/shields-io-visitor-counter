@@ -2,6 +2,7 @@ from hypothesis import example, given
 from hypothesis.strategies import characters, dictionaries, one_of, text
 from flask import request
 from main import app, compile_shields_io_url, get_page_count, get_page_hash, redirect_to_github_repository
+from string import ascii_letters, digits
 from typing import Any, Dict
 from unittest.mock import MagicMock
 from urllib.parse import urljoin
@@ -14,6 +15,9 @@ DEFAULT_SHIELDS_IO_COLOR = os.getenv("DEFAULT_SHIELDS_IO_COLOR")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
 URL_COUNTAPI = os.getenv("URL_COUNTAPI")
 URL_SHIELDS_IO = os.getenv("URL_SHIELDS_IO")
+
+# Define allowable characters for testing, i.e. all ASCII letters, digits, and a space
+CHARACTERS = "".join([ascii_letters, digits]) + " "
 
 
 class TestRedirectToGithubRepository:
@@ -57,7 +61,7 @@ def test_get_page_hash_returns_correctly(mocker, test_input_page: str, test_inpu
     assert get_page_hash(test_input_page) == test_expected
 
 
-@given(test_input=text())
+@given(test_input=text(CHARACTERS))
 def test_get_page_count_calls_countapi_correctly(patch_requests_get: MagicMock, test_input: str) -> None:
     """Test get_page_count calls CountAPI correctly."""
 
@@ -113,7 +117,7 @@ def mock_requests_get(*args: Any) -> object:
         return MockResponse(None, 404)
 
 
-@given(test_input=one_of(characters(whitelist_categories="P"), text()))
+@given(test_input=one_of(characters(whitelist_categories="P"), text(CHARACTERS)))
 def test_get_page_count_returns_correctly_with_working_countapi(patch_requests_get: MagicMock, test_input: str) -> None:
     """Test get_page_count returns the correct counts if the CountAPI is working correctly."""
 
@@ -134,8 +138,8 @@ def test_get_page_count_returns_correctly_with_failing_countapi(patch_requests_g
     assert get_page_count("test_key") is None
 
 
-@given(test_input_label=text(), test_input_message=text(), test_input_color=text(),
-       test_input_kwargs=dictionaries(text(), text()))
+@given(test_input_label=text(CHARACTERS), test_input_message=text(CHARACTERS), test_input_color=text(CHARACTERS),
+       test_input_kwargs=dictionaries(text(CHARACTERS), text(CHARACTERS)))
 @example(test_input_label="label", test_input_message="message", test_input_color="color", test_input_kwargs={})
 def test_compile_shields_io_url_returns_correctly(test_input_label: str, test_input_message: str,
                                                   test_input_color: str, test_input_kwargs: Dict[str, str]) -> None:
@@ -158,7 +162,7 @@ def test_compile_shields_io_url_returns_correctly(test_input_label: str, test_in
 
 class TestGetShieldsIoBadge:
 
-    @given(test_input_query=dictionaries(text(), text()))
+    @given(test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     @example(test_input_query={})
     def test_request_args_to_dict(self, test_input_query: dict) -> None:
         """Test the flask.request.args are converted into a dictionary."""
@@ -167,7 +171,7 @@ class TestGetShieldsIoBadge:
         with app.test_request_context(path="/badge", query_string=test_input_query):
             assert request.args.to_dict() == test_input_query
 
-    @given(test_input_query=dictionaries(text(), text()))
+    @given(test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     @example(test_input_query={})
     def test_request_arguments_defaults_set(self, mocker, test_input_query: dict) -> None:
         """Test default values are set if label and color are not in the query string."""
@@ -185,7 +189,7 @@ class TestGetShieldsIoBadge:
                                                              color=DEFAULT_SHIELDS_IO_COLOR,
                                                              **test_input_query)
 
-    @given(test_input_message=text(), test_input_query=dictionaries(text(), text()))
+    @given(test_input_message=text(CHARACTERS), test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_get_page_count_not_called_if_message_in_request_arguments(self, mocker, test_input_message: str,
                                                                        test_input_query: dict) -> None:
         """Test that get_page_count is not called if message is in the request arguments."""
@@ -199,7 +203,7 @@ class TestGetShieldsIoBadge:
         # Assert get_page_count is not called
         patch_get_page_count.assert_not_called()
 
-    @given(test_input_message=text(), test_input_query=dictionaries(text(), text()))
+    @given(test_input_message=text(CHARACTERS), test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_assertionerror_handling_if_message_in_request_arguments(self, mocker, test_input_message: str,
                                                                      test_input_query: dict) -> None:
         """Test that an error message and label are produced if message is in the request arguments."""
@@ -220,7 +224,7 @@ class TestGetShieldsIoBadge:
                                                              label="HTTP 400",
                                                              **test_input_query)
 
-    @given(test_input_page=text(), test_input_query=dictionaries(text(), text()))
+    @given(test_input_page=text(CHARACTERS), test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_get_page_hash_called_correctly(self, mocker, test_input_page: str, test_input_query: dict) -> None:
         """Test that get_page_hash is called with the correct arguments."""
 
@@ -234,7 +238,7 @@ class TestGetShieldsIoBadge:
         # Assert get_page_hash is called correctly
         patch_get_page_hash.assert_called_once_with(test_input_page)
 
-    @given(test_input_page=text(), test_input_query=dictionaries(text(), text()))
+    @given(test_input_page=text(CHARACTERS), test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_get_page_count_called_correctly(self, mocker, test_input_page: str, test_input_query: dict) -> None:
         """Test that get_page_count is called with the correct arguments."""
 
@@ -248,7 +252,7 @@ class TestGetShieldsIoBadge:
         # Assert get_page_count is called correctly
         patch_get_page_count.assert_called_once_with(patch_get_page_hash.return_value[:64])
 
-    @given(test_input_query=dictionaries(text(), text()))
+    @given(test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_get_page_count_not_called_if_page_not_in_request_arguments(self, mocker, test_input_query: dict) -> None:
         """Test that get_page_count is not called if page is not in the request arguments."""
 
@@ -265,7 +269,7 @@ class TestGetShieldsIoBadge:
         # Assert get_page_count is not called
         patch_get_page_count.assert_not_called()
 
-    @given(test_input_query=dictionaries(text(), text()))
+    @given(test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_keyerror_handling_if_page_not_in_request_arguments(self, mocker, test_input_query: dict) -> None:
         """Test that an error message and label are produced if page is not in the request arguments."""
 
@@ -289,7 +293,7 @@ class TestGetShieldsIoBadge:
                                                              label="HTTP 400",
                                                              **test_input_query)
 
-    @given(test_input_page=text(), test_input_query=dictionaries(text(), text()))
+    @given(test_input_page=text(CHARACTERS), test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_assertionerror_handling_if_get_page_count_fails(self, mocker, test_input_page: str,
                                                              test_input_query: dict) -> None:
         """Test that an error message and label are produced if get_page_count fails."""
@@ -310,7 +314,7 @@ class TestGetShieldsIoBadge:
                                                              label="HTTP 503",
                                                              **test_input_query)
 
-    @given(test_input_query=dictionaries(text(), text()))
+    @given(test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_exception_handling_from_get_page_hash(self, mocker, test_input_query: dict) -> None:
         """Test other exception handling by get_page_hash raises a HTTP 405 status code."""
 
@@ -327,7 +331,7 @@ class TestGetShieldsIoBadge:
         # Assert a HTTP 405 status code is returned
         assert client.post("/badge").status_code == 405
 
-    @given(test_input_query=dictionaries(text(), text()))
+    @given(test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_exception_handling_from_get_page_count(self, mocker, test_input_query: dict) -> None:
         """Test other exception handling by get_page_count raises a HTTP 405 status code."""
 
@@ -344,8 +348,8 @@ class TestGetShieldsIoBadge:
         # Assert a HTTP 405 status code is returned
         assert client.post("/badge").status_code == 405
 
-    @given(test_input_page=text(), test_input_label=text(), test_input_color=text(),
-           test_input_query=dictionaries(text(), text()))
+    @given(test_input_page=text(CHARACTERS), test_input_label=text(CHARACTERS), test_input_color=text(CHARACTERS),
+           test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_compile_shields_io_url_called_correctly(self, mocker, test_input_page: str, test_input_label: str,
                                                      test_input_color: str, test_input_query: dict) -> None:
         """Test compile_shields_io_url is called correctly."""
@@ -364,7 +368,7 @@ class TestGetShieldsIoBadge:
                                                              label=test_input_label, color=test_input_color,
                                                              **test_input_query)
 
-    @given(test_input_page=text(), test_input_query=dictionaries(text(), text()))
+    @given(test_input_page=text(CHARACTERS), test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_requests_get_is_called_correctly(self, mocker, test_input_page: str, test_input_query: dict) -> None:
         """Test requests.get function is called correctly."""
 
@@ -379,7 +383,7 @@ class TestGetShieldsIoBadge:
         # Assert requests.get is called with the correct arguments
         patch_requests_get.assert_called_once_with(patch_compile_shields_io_url.return_value)
 
-    @given(test_input_page=text(), test_input_query=dictionaries(text(), text()))
+    @given(test_input_page=text(CHARACTERS), test_input_query=dictionaries(text(CHARACTERS), text(CHARACTERS)))
     def test_flask_response_is_called_correctly(self, mocker, test_input_page: str, test_input_query: dict) -> None:
         """Test flask.Response class is called correctly."""
 
