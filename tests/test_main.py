@@ -1,3 +1,4 @@
+from datetime import timedelta
 from hypothesis import example, given, settings
 from hypothesis.strategies import characters, dictionaries, one_of, text
 from flask import request
@@ -419,11 +420,18 @@ class TestGetShieldsIoBadge:
         # Patch the get_page_count, and requests.get functions, and the flask.Response class
         _ = mocker.patch("main.get_page_count")
         patch_requests_get = mocker.patch("requests.get")
+        patch_datetime = mocker.patch("main.datetime")
         patch_flask_response = mocker.patch("main.Response")
 
         # Get the /badge page of the app
         _ = app.test_client().get("/badge", query_string={"page": test_input_page, **test_input_query})
 
+        # Define the mock expiry time
+        mock_expiry_time = patch_datetime.utcnow.return_value - timedelta(minutes=10)
+
         # Assert flask.Response is called with the correct arguments
-        patch_flask_response.assert_called_once_with(response=patch_requests_get.return_value,
-                                                     content_type="image/svg+xml")
+        patch_flask_response.assert_called_once_with(
+            response=patch_requests_get.return_value, content_type="image/svg+xml",
+            headers={"Cache-Control": "no-cache,max-age=0,no-store,s-maxage=0,proxy-revalidate",
+                     "Expires": mock_expiry_time.strftime("%a, %d %b %Y %H:%M:%S GMT")}
+        )

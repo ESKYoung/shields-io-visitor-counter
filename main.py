@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from flask import Flask, Response, redirect, request
 from typing import Dict, Optional, Tuple, Union
 from urllib.parse import SplitResult, urlsplit, urlunsplit
@@ -165,8 +166,13 @@ def get_shields_io_badge() -> Union[Response, Tuple[str, int]]:
     # Get the Shields.IO badge
     svg = requests.get(compile_shields_io_url(message=message, **request_arguments))
 
+    # Set the expiry time, and create a response header
+    expiry_time = datetime.utcnow() - timedelta(minutes=10)
+    headers = {"Cache-Control": "no-cache,max-age=0,no-store,s-maxage=0,proxy-revalidate",
+               "Expires": expiry_time.strftime("%a, %d %b %Y %H:%M:%S GMT")}
+
     # Return the badge to the user
-    return Response(response=svg, content_type="image/svg+xml")
+    return Response(response=svg, content_type="image/svg+xml", headers=headers)
 
 
 if __name__ == '__main__':
