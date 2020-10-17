@@ -1,6 +1,6 @@
 from flask import Flask, Response, redirect, request
 from typing import Dict, Optional, Tuple, Union
-from urllib.parse import SplitResult, quote, urlsplit, urlunsplit
+from urllib.parse import SplitResult, urlsplit, urlunsplit
 import hashlib
 import os
 import requests
@@ -57,8 +57,8 @@ def combine_url_and_query(url: Union[str, SplitResult], query: str) -> str:
     # Get the URL components, if it is a string
     url_components = url if isinstance(url, SplitResult) else urlsplit(url)
 
-    # Quote the query string, set it to the url query attribute, and return the url as a complete string
-    return urlunsplit(url_components._replace(query=quote(query)))
+    # Set the query to the url query attribute, and return the url as a complete string
+    return urlunsplit(url_components._replace(query=query))
 
 
 def get_page_count(key: str) -> Optional[int]:

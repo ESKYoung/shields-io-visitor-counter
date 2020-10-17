@@ -71,10 +71,10 @@ def test_get_page_hash_returns_correctly(mocker, test_input_page: str, test_inpu
 
 # Define test cases for the combine_url_and_query function
 args_test_combine_url_and_query_returns_correctly = [
-    ("http://www.google.com", "hello world", "http://www.google.com?hello%20world"),
-    ("https://www.google.com", "hello\nworld", "https://www.google.com?hello%0Aworld"),
-    (urlsplit("http://www.google.com"), "hello world", "http://www.google.com?hello%20world"),
-    (urlsplit("https://www.google.com"), "hello\nworld", "https://www.google.com?hello%0Aworld")
+    ("http://www.google.com", "hello world", "http://www.google.com?hello world"),
+    ("https://www.google.com", "hello\nworld", "https://www.google.com?hello\nworld"),
+    (urlsplit("http://www.google.com"), "hello world", "http://www.google.com?hello world"),
+    (urlsplit("https://www.google.com"), "hello\nworld", "https://www.google.com?hello\nworld")
 ]
 
 
