@@ -1,15 +1,19 @@
-from hypothesis import example, given
+from hypothesis import example, given, settings
 from hypothesis.strategies import characters, dictionaries, one_of, text
 from flask import request
 from main import (
     app, combine_url_and_query, compile_shields_io_url, get_page_count, get_page_hash, redirect_to_github_repository
 )
-from string import ascii_letters, digits, punctuation
+from string import printable
 from typing import Any, Dict, Union
 from unittest.mock import MagicMock
 from urllib.parse import SplitResult, urlsplit
 import os
 import pytest
+
+# Define Hypothesis settings to increase deadline
+settings.register_profile("test_main", deadline=1000)
+settings.load_profile("test_main")
 
 # Import environmental variables
 DEFAULT_SHIELDS_IO_LABEL = os.getenv("DEFAULT_SHIELDS_IO_LABEL")
@@ -18,14 +22,10 @@ GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
 URL_COUNTAPI = os.getenv("URL_COUNTAPI").rstrip("/")
 URL_SHIELDS_IO = os.getenv("URL_SHIELDS_IO").rstrip("/")
 
-# Define allowable characters for testing, i.e. all ASCII letters, digits, punctuation, and a space
-CHARACTERS_PAGE = "".join([ascii_letters, digits])
-CHARACTERS = "".join([CHARACTERS_PAGE, punctuation]) + " "
-
 # Define hypothesis test strategies
-STRATEGY_TEST_INPUT = text(CHARACTERS)
-STRATEGY_TEST_INPUT_PAGE = text(CHARACTERS_PAGE, min_size=1)
-STRATEGY_TEST_INPUT_QUERY = dictionaries(text(ascii_letters, min_size=1), STRATEGY_TEST_INPUT)
+STRATEGY_TEST_INPUT = text(printable)
+STRATEGY_TEST_INPUT_PAGE = text(printable, min_size=1)
+STRATEGY_TEST_INPUT_QUERY = dictionaries(text(printable, min_size=1), STRATEGY_TEST_INPUT)
 
 
 class TestRedirectToGithubRepository:
