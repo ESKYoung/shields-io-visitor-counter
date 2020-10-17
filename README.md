@@ -7,8 +7,16 @@
 [![Codecov](https://img.shields.io/codecov/c/github/ESKYoung/shields-io-visitor-counter/main?logo=Codecov&logoColor=FFFFFF&style=flat-square)](https://codecov.io/gh/ESKYoung/shields-io-visitor-counter)
 [![Visitor count](https://shields-io-visitor-counter.herokuapp.com/badge?page=ESKYoung.shields-io-visitor-counter&color=1D70B8&logo=GitHub&logoColor=FFFFFF&style=flat-square)](https://github.com/ESKYoung/shields-io-visitor-counter)
 
-This work is based on [Visitor Badge](https://github.com/jwenjian/visitor-badge) by Jiang Wenjian.
+A simple visitor counter displayed as a Shields.IO static badge.
 
 ## Contributing
 
 If you'd like to contribute to this work, take a look at [`CONTRIBUTING.md`](./CONTRIBUTING.md) to get started!
+
+## Attribution
+
+This work is based on [Visitor Badge][visitor-badge] by Jiang Wenjian, and their excellent
+[blog post][blog] on its development.
+
+[blog]: https://dev.to/jwenjian/the-story-of-visitor-badge-46mm
+[visitor-badge]: https://github.com/jwenjian/visitor-badge
