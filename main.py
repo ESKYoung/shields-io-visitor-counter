@@ -76,7 +76,7 @@ def get_page_count(key: str) -> Optional[int]:
     try:
 
         # Get the count from CountAPI
-        countapi_response = requests.get(combine_url_and_query(URL_COUNTAPI, key))
+        countapi_response = requests.get(f"{URL_COUNTAPI}/{key}")
 
         # Check a correct return is supplied
         if countapi_response and countapi_response.status_code == 200:
@@ -136,7 +136,7 @@ def get_shields_io_badge() -> Union[Response, Tuple[str, int]]:
         # Get the page hash
         page_hash = get_page_hash(request_arguments.pop("page"))
 
-        # Get the page count from COUNT API, and assert it is not empty
+        # Get the page count from CountAPI, and assert it is not empty
         message = get_page_count(page_hash[:64])
         assert message
 

@@ -9,5 +9,5 @@ def patch_flask_redirect(mocker):
 
 @pytest.fixture(scope="session")
 def patch_requests_get(session_mocker):
-    """Patch the request.get function"""
+    """Patch the request.get function."""
     return session_mocker.patch("requests.get")

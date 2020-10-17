@@ -95,7 +95,7 @@ def test_get_page_count_calls_countapi_correctly(patch_requests_get: MagicMock, 
     _ = get_page_count(test_input)
 
     # Assert the requests.get function is called once with the correct argument
-    patch_requests_get.assert_called_with(combine_url_and_query(URL_COUNTAPI, test_input))
+    patch_requests_get.assert_called_with(f"{URL_COUNTAPI}/{test_input}")
 
 
 def mock_requests_get(*args: Any) -> object:
@@ -136,8 +136,8 @@ def mock_requests_get(*args: Any) -> object:
             """
             return self.json_data
 
-    # Define the MockResponse attributes if the URL stub is "" or otherwise
-    if args[0] != URL_COUNTAPI:
+    # Define the MockResponse attributes if the URL stub is whitespace or otherwise empty
+    if args[0].rstrip(" /") != URL_COUNTAPI:
         return MockResponse({"value": 100}, 200)
     else:
         return MockResponse(None, 404)
@@ -151,7 +151,7 @@ def test_get_page_count_returns_correctly_with_working_countapi(patch_requests_g
     patch_requests_get.side_effect = mock_requests_get
 
     # Call the get_page_count function, and assert the returned value is correct
-    if combine_url_and_query(URL_COUNTAPI, test_input) != URL_COUNTAPI:
+    if test_input.rstrip(" /"):
         assert get_page_count(test_input) == 100
     else:
         assert get_page_count(test_input) is None
