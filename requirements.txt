@@ -3,7 +3,10 @@ detect-secrets
 flake8
 flask
 gunicorn
+hypothesis
 pre-commit
 pytest
 pytest-mock
 pytest-xdist
+requests
+werkzeug
