@@ -12,9 +12,9 @@ A simple visitor counter displayed as a Shields.IO static badge.
 ## How it works
 
 This application is deployed on Heroku, and creates a Shields.IO static badge that you can embed on your page. Every
-time you page loads, it reloads the badge, which pings [CountAPI][countapi] to increase the counter!
+time your page loads, it reloads the badge, which pings [CountAPI][countapi] to increase the counter!
 
-### Creating your own visitor counter
+## Creating your own visitor counter
 
 If you've used [Shields.IO][shields-io] before, it's really straightforward! Let's use the
 [octocat/Spoon-Knife][spoon-knife] GitHub repository as an example.
@@ -33,7 +33,7 @@ And to embed this in Markdown, just use:
 ![Visitor count](https://shields-io-visitor-counter.herokuapp.com/badge?page=octocat.Spoon-Knife)
 ```
 
-#### Options
+### Options
 
 The only mandatory argument is `page`, but you can use _almost_ all options available on [Shields.IO][shields-io] — the
 only unavailable one is `message`, as this is the count! To add option, just add it to URL query component.
@@ -64,7 +64,7 @@ which gives us:
 Note we used hex colours in the URL, but [Shields.IO][shields-io] also supports (some) colours by name!
 
 
-### Caveats
+## Caveats
 
 - It's not smart enough to track users by IP address, for example. So if you reload the page, the counter will also
   increase!

@@ -60,10 +60,10 @@ information.
 The entire application can be found in [`main.py`](./main.py), with its associated tests in the [`tests`](./tests)
 folder; tests are executed using [pytest][pytest]
 
-Travis CI deployment is managed by the [`.travis.yml`](./.travis.yml) file - see the [Deployment](#deployment)
+Travis CI deployment is managed by the [`.travis.yml`](./.travis.yml) file — see the [Deployment](#deployment)
 section for further details.
 
-The application uses environment variables extensively - see the [Environment variables](#environment-variables)
+The application uses environment variables extensively — see the [Environment variables](#environment-variables)
 section for further details.
 
 ### Environment variables
