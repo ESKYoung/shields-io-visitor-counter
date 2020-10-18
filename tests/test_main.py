@@ -1,9 +1,11 @@
 from datetime import timedelta
+from http import HTTPStatus
 from hypothesis import example, given, settings
 from hypothesis.strategies import characters, dictionaries, one_of, text
-from flask import request
+from flask import render_template, request
 from main import (
-    app, combine_url_and_query, compile_shields_io_url, get_page_count, get_page_hash, redirect_to_github_repository
+    app, combine_url_and_query, compile_shields_io_url, cron_page, get_page_count, get_page_hash,
+    redirect_to_github_repository
 )
 from string import printable
 from typing import Any, Dict, Union
@@ -20,6 +22,7 @@ settings.load_profile("test_main")
 DEFAULT_SHIELDS_IO_LABEL = os.getenv("DEFAULT_SHIELDS_IO_LABEL")
 DEFAULT_SHIELDS_IO_COLOR = os.getenv("DEFAULT_SHIELDS_IO_COLOR")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
+HTML_CRON = os.getenv("HTML_CRON")
 URL_COUNTAPI = os.getenv("URL_COUNTAPI").rstrip("/")
 URL_SHIELDS_IO = os.getenv("URL_SHIELDS_IO").rstrip("/")
 
@@ -138,9 +141,9 @@ def mock_requests_get(*args: Any) -> object:
 
     # Define the MockResponse attributes if the URL stub is whitespace or otherwise empty
     if args[0].rstrip(" /") != URL_COUNTAPI:
-        return MockResponse({"value": 100}, 200)
+        return MockResponse({"value": HTTPStatus.CONTINUE}, HTTPStatus.OK)
     else:
-        return MockResponse(None, 404)
+        return MockResponse(None, HTTPStatus.NOT_FOUND)
 
 
 @given(test_input=one_of(characters(whitelist_categories="P"), STRATEGY_TEST_INPUT))
@@ -152,7 +155,7 @@ def test_get_page_count_returns_correctly_with_working_countapi(patch_requests_g
 
     # Call the get_page_count function, and assert the returned value is correct
     if test_input.rstrip(" /"):
-        assert get_page_count(test_input) == 100
+        assert get_page_count(test_input) == HTTPStatus.CONTINUE
     else:
         assert get_page_count(test_input) is None
 
@@ -346,7 +349,7 @@ class TestGetShieldsIoBadge:
 
     @given(test_input_query=STRATEGY_TEST_INPUT_QUERY)
     def test_exception_handling_from_get_page_hash(self, mocker, test_input_query: dict) -> None:
-        """Test other exception handling by get_page_hash raises a HTTP 405 status code."""
+        """Test other exception handling by get_page_hash raises a HTTP 500 status code."""
 
         # Patch the get_page_hash, and get_page_count functions
         _ = mocker.patch("main.get_page_hash", side_effect=Exception())
@@ -355,15 +358,13 @@ class TestGetShieldsIoBadge:
         # Set up the app test client
         client = app.test_client()
 
-        # Get the /badge page of the app
-        _ = client.get("/badge", query_string={"page": "example", **test_input_query})
-
-        # Assert a HTTP 405 status code is returned
-        assert client.post("/badge").status_code == 405
+        # Get the /badge page of the app, and assert it returns a HTTP 500 status code
+        get_client = client.get("/badge", query_string={"page": "example", **test_input_query})
+        assert get_client.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
 
     @given(test_input_query=STRATEGY_TEST_INPUT_QUERY)
     def test_exception_handling_from_get_page_count(self, mocker, test_input_query: dict) -> None:
-        """Test other exception handling by get_page_count raises a HTTP 405 status code."""
+        """Test other exception handling by get_page_count raises a HTTP 500 status code."""
 
         # Patch the get_page_hash, and get_page_count functions
         _ = mocker.patch("main.get_page_hash")
@@ -372,11 +373,9 @@ class TestGetShieldsIoBadge:
         # Set up the app test client
         client = app.test_client()
 
-        # Get the /badge page of the app
-        _ = client.get("/badge", query_string={"page": "example", **test_input_query})
-
-        # Assert a HTTP 405 status code is returned
-        assert client.post("/badge").status_code == 405
+        # Get the /badge page of the app, and assert it returns a HTTP 500 status code
+        get_client = client.get("/badge", query_string={"page": "example", **test_input_query})
+        assert get_client.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
 
     @given(test_input_page=STRATEGY_TEST_INPUT_PAGE, test_input_label=STRATEGY_TEST_INPUT,
            test_input_color=STRATEGY_TEST_INPUT, test_input_query=STRATEGY_TEST_INPUT_QUERY)
@@ -435,3 +434,20 @@ class TestGetShieldsIoBadge:
             headers={"Cache-Control": "no-cache,max-age=0,no-store,s-maxage=0,proxy-revalidate",
                      "Expires": mock_expiry_time.strftime("%a, %d %b %Y %H:%M:%S GMT")}
         )
+
+
+class TestCronPage:
+
+    def test_returns_correct_status_code(self) -> None:
+        """Test the cron_page function returns correctly."""
+        with app.test_request_context(path="/cron"):
+            assert cron_page() == render_template(HTML_CRON)
+
+    def test_returns_correctly(self) -> None:
+        """Test calling the /cron slug returns correctly."""
+
+        # Set up the app test client
+        client = app.test_client()
+
+        # Get the /cron page of the app, and assert returns a HTTP 200 status code
+        assert client.get("/cron").status_code == HTTPStatus.OK

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-from flask import Flask, Response, redirect, request
-from typing import Dict, Optional, Tuple, Union
+from flask import Flask, Response, redirect, render_template, request
+from typing import Any, Dict, Optional, Tuple, Union
 from urllib.parse import SplitResult, urlsplit, urlunsplit
 import hashlib
 import os
@@ -12,6 +12,7 @@ DEFAULT_SHIELDS_IO_LABEL = os.getenv("DEFAULT_SHIELDS_IO_LABEL")
 DEFAULT_SHIELDS_IO_COLOR = os.getenv("DEFAULT_SHIELDS_IO_COLOR")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
 HASH_KEY = os.getenv("HASH_KEY")
+HTML_CRON = os.getenv("HTML_CRON")
 URL_COUNTAPI = os.getenv("URL_COUNTAPI").rstrip("/")
 URL_SHIELDS_IO = os.getenv("URL_SHIELDS_IO").rstrip("/")
 
@@ -173,6 +174,17 @@ def get_shields_io_badge() -> Union[Response, Tuple[str, int]]:
 
     # Return the badge to the user
     return Response(response=svg, content_type="image/svg+xml", headers=headers)
+
+
+@app.route("/cron")
+def cron_page() -> Tuple[Any, int]:
+    """Add a page for cron jobs to wake up the application.
+
+    Returns:
+        A HTTP no content status code.
+
+    """
+    return render_template(HTML_CRON)
 
 
 if __name__ == '__main__':
