@@ -6,7 +6,10 @@ questions, please [contact us][support].
 - [Code of Conduct](#code-of-conduct)
 - [Getting started](#getting-started)
   - [Installing Python packages](#installing-python-packages)
-  - [Pre-commit hooks](#pre-commit-hooks)
+    - [Pre-commit hooks](#pre-commit-hooks)
+- [Development](#deployment)
+  - [Environment variables](#environment-variables)
+- [Deployment](#deployment)
 
 ## Code of Conduct
 
@@ -56,6 +59,36 @@ information.
 [pre-commit]: https://pre-commit.com
 [detect-secrets]: https://github.com/Yelp/detect-secrets
 
+## Development
+
+The entire application can be found in [`main.py`](./main.py), with its associated tests in the [`tests`](./tests)
+folder; tests are executed using [pytest][pytest]
+
+Travis CI deployment is managed by the [`.travis.yml`](./.travis.yml) file - see the [Deployment](#deployment)
+section for further details.
+
+The application uses environment variables extensively - see the [Environment variables](#environment-variables)
+section for further details.
+
+### Environment variables
+
+Here are the definitions for the environment variables found in [`.envrc`](./.envrc):
+
+| Name                       | Description                                                                                                                                                                |
+| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DEFAULT_SHIELDS_IO_LABEL` | Default label text to use if the `label` parameter isn't supplied by the user.                                                                                             |
+| `DEFAULT_SHIELDS_IO_COLOR` | Default message background colour if the `color` parameter isn't supplied by the user.                                                                                     |
+| `GITHUB_REPOSITORY`        | Default URL to redirect if a user goes to the application [home page][application].                                                                                        |
+| `FLASK_APP`                | Used by Flask to identify the application script - [`main.py`](./main.py) in this case.                                                                                    |
+| `HASH_KEY`                 | Combined with `page` to use as the CountAPI key - defined in Heroku under config vars, but should be uncommented and added in when deploying the application locally.      |
+| `HTML_CRON`                | HTML file name in the [`templates`](./templates) folder that cron jobs should point to. This allows cron jobs to keep the application awake without affecting the counter. |
+| `URL_COUNTAPI`             | URL for CountAPI including only the namespace.                                                                                                                             |
+| `URL_SHIELDS_IO`           | URL for creating static Shields.IO badges.                                                                                                                                 |
+
+Note, when you run `direnv allow` this should export all the uncommented environment variables in a `.env` file, as
+this may be useful, e.g. for use with PyCharm's [EnvFile][envfile] plugin to use environment variables with PyCharm run
+configurations.
+
 ## Deployment
 
 This application is deployed on Heroku at [https://shields-io-visitor-counter.herokuapp.com][application]
@@ -66,4 +99,6 @@ Git tags are only applied for releases, and vice versa. Tags/releases are named 
 versioning][semver].
 
 [application]: https://shields-io-visitor-counter.herokuapp.com
+[envfile]: https://plugins.jetbrains.com/plugin/7861-envfile
+[pytest]: https://docs.pytest.org/
 [semver]: https://semver.org/
