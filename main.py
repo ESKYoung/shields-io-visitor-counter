@@ -177,7 +177,7 @@ def get_shields_io_badge() -> Union[Response, Tuple[str, int]]:
 
 
 @app.route("/cron")
-def cron_page() -> Tuple[Any, int]:
+def cron_page() -> Any:
     """Add a page for cron jobs to wake up the application.
 
     Returns:
