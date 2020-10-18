@@ -181,7 +181,7 @@ def cron_page() -> Any:
     """Add a page for cron jobs to wake up the application.
 
     Returns:
-        A HTTP no content status code.
+        A HTML viewed by the cron job once it successfully wakes the application.
 
     """
     return render_template(HTML_CRON)
