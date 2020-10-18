@@ -83,7 +83,11 @@ Here are the definitions for the environment variables found in [`.envrc`](./.en
 
 Note, when you run `direnv allow` this should export all the uncommented environment variables in a `.env` file, as
 this may be useful, e.g. for use with PyCharm's [EnvFile][envfile] plugin to use environment variables with PyCharm run
-configurations.
+configurations. You can also manually create a `.env` file using the following Make command:
+
+```
+make dotenv
+```
 
 ## Deployment
 
