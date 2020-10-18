@@ -55,10 +55,6 @@ If the pre-commit hooks incorrectly flag items as secrets, you will have to scan
 [`.secrets.baseline`](./.secrets.baseline) — refer to the [`detect-secrets`][detect-secrets] documentation for further
 information.
 
-[support]: mailto:eskyoung.github@gmail.com?subject=Support
-[pre-commit]: https://pre-commit.com
-[detect-secrets]: https://github.com/Yelp/detect-secrets
-
 ## Development
 
 The entire application can be found in [`main.py`](./main.py), with its associated tests in the [`tests`](./tests)
@@ -102,7 +98,10 @@ Travis CI builds the application on Linux Python 3.6+, but only macOS Python 3.7
 different Python versions on macOS Travis CI builds. See the [`.travis.yml`](./.travis.yml) for further details.
 
 [application]: https://shields-io-visitor-counter.herokuapp.com
+[detect-secrets]: https://github.com/Yelp/detect-secrets
 [envfile]: https://plugins.jetbrains.com/plugin/7861-envfile
+[pre-commit]: https://pre-commit.com
 [pytest]: https://docs.pytest.org/
 [semver]: https://semver.org/
+[support]: mailto:eskyoung.github@gmail.com?subject=Support
 [travis-ci]: https://travis-ci.com/github/ESKYoung/shields-io-visitor-counter
