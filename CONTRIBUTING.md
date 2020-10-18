@@ -98,6 +98,9 @@ By default, Travis CI will only deploy commits with Git tags. We work on the ass
 Git tags are only applied for releases, and vice versa. Tags/releases are named according to [semantic
 versioning][semver].
 
+Travis CI builds the application on Linux Python 3.6+, but only macOS Python 3.7-3.8 due to difficulties installing
+different Python versions on macOS Travis CI builds. See the [`.travis.yml`](./.travis.yml) for further details.
+
 [application]: https://shields-io-visitor-counter.herokuapp.com
 [envfile]: https://plugins.jetbrains.com/plugin/7861-envfile
 [pytest]: https://docs.pytest.org/
