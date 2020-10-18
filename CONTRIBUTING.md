@@ -92,7 +92,7 @@ configurations.
 ## Deployment
 
 This application is deployed on Heroku at [https://shields-io-visitor-counter.herokuapp.com][application]
-automatically by Travis CI.
+automatically by Travis CI. You can view previous builds [here][travis-ci].
 
 By default, Travis CI will only deploy commits with Git tags. We work on the assumption that tags are also releases, so
 Git tags are only applied for releases, and vice versa. Tags/releases are named according to [semantic
@@ -105,3 +105,4 @@ different Python versions on macOS Travis CI builds. See the [`.travis.yml`](./.
 [envfile]: https://plugins.jetbrains.com/plugin/7861-envfile
 [pytest]: https://docs.pytest.org/
 [semver]: https://semver.org/
+[travis-ci]: https://travis-ci.com/github/ESKYoung/shields-io-visitor-counter
