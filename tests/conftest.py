@@ -1,4 +1,10 @@
+import os
 import pytest
+
+
+def pytest_sessionstart(session):
+    """Set environment variables on start of the pytest session."""
+    os.environ["HASH_KEY"] = "pytest"
 
 
 @pytest.fixture
