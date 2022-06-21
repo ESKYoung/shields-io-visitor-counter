@@ -6,7 +6,6 @@ gunicorn
 hypothesis
 pre-commit
 pytest
-pytest-env
 pytest-mock
 pytest-xdist
 requests
