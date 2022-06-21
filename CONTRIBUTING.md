@@ -21,7 +21,7 @@ To contribute to this code, please make sure your system meets the following req
 
 - Unix-like operating system (macOS, Linux, …);
 - Load environment variables from [`.envrc`](/.envrc);
-- Python 3.6 or above; and
+- Python 3.8 or above; and
 - Python packages [installed](#installing-python-packages) from the [`requirements.txt`](./requirements.txt) file.
 
 We recommend installing [`direnv`](https://direnv.net/), and its shell hooks to load environment variables from
@@ -97,9 +97,6 @@ automatically by Travis CI. You can view previous builds [here][travis-ci].
 By default, Travis CI will only deploy commits with Git tags. We work on the assumption that tags are also releases, so
 Git tags are only applied for releases, and vice versa. Tags/releases are named according to [semantic
 versioning][semver].
-
-Travis CI builds the application on Linux Python 3.6+, but only macOS Python 3.7-3.8 due to difficulties installing
-different Python versions on macOS Travis CI builds. See the [`.travis.yml`](./.travis.yml) for further details.
 
 [application]: https://shields-io-visitor-counter.herokuapp.com
 [detect-secrets]: https://github.com/Yelp/detect-secrets
