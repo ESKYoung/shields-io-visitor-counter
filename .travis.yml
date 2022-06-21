@@ -22,6 +22,9 @@ script:
 after_success:
   - codecov
 
+before_deploy:
+  - rvm $(travis_internal_ruby) --fuzzy do ruby -S gem install faraday -v 1.8.0
+
 deploy:
   provider: heroku
   api_key:
