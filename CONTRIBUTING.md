@@ -70,16 +70,20 @@ section for further details.
 
 Here are the definitions for the environment variables found in [`.envrc`](./.envrc):
 
-| Name                       | Description                                                                                                                                                                |
-| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `DEFAULT_SHIELDS_IO_LABEL` | Default label text to use if the `label` parameter isn't supplied by the user.                                                                                             |
-| `DEFAULT_SHIELDS_IO_COLOR` | Default message background colour if the `color` parameter isn't supplied by the user.                                                                                     |
-| `GITHUB_REPOSITORY`        | Default URL to redirect if a user goes to the application [home page][application].                                                                                        |
-| `FLASK_APP`                | Used by Flask to identify the application script - [`main.py`](./main.py) in this case.                                                                                    |
-| `HASH_KEY`                 | Combined with `page` to use as the CountAPI key - defined in Heroku under config vars, but should be uncommented and added in when deploying the application locally.      |
-| `HTML_CRON`                | HTML file name in the [`templates`](./templates) folder that cron jobs should point to. This allows cron jobs to keep the application awake without affecting the counter. |
-| `URL_COUNTAPI`             | URL for CountAPI including only the namespace.                                                                                                                             |
-| `URL_SHIELDS_IO`           | URL for creating static Shields.IO badges.                                                                                                                                 |
+| Name                       | Description                                                                                                                                                                               |
+| :------------------------- |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `DEFAULT_SHIELDS_IO_LABEL` | Default label text to use if the `label` parameter isn't supplied by the user.                                                                                                            |
+| `DEFAULT_SHIELDS_IO_COLOR` | Default message background colour if the `color` parameter isn't supplied by the user.                                                                                                    |
+| `GITHUB_REPOSITORY`        | Default URL to redirect if a user goes to the application [home page][application].                                                                                                       |
+| `FLASK_APP`                | Used by Flask to identify the application script - [`main.py`](./main.py) in this case.                                                                                                   |
+| `HASH_KEY`                 | A user-specific hash for encoding `page` to use as the CountAPI key - defined in Heroku under config vars, but should be uncommented and added in when deploying the application locally. |
+| `HTML_CRON`                | HTML file name in the [`templates`](./templates) folder that cron jobs should point to. This allows cron jobs to keep the application awake without affecting the counter.                |
+| `URL_COUNTAPI`             | URL for CountAPI including only the namespace. This should be a URL starting with `https://api.countapi.xyz/hit/`, as the `hit` endpoint increments the counter, and returns the count.   |
+| `URL_SHIELDS_IO`           | URL for creating static Shields.IO badges.                                                                                                                                                |
+
+Make sure your `HASH_KEY` is unique to your deployment, for example by generating your own with a SHA256 hash generator.
+Don't share it with others. Otherwise, they could reset, increment, or update your counter (and anyone else's counters
+using your deployment).
 
 Note, when you run `direnv allow` this should export all the uncommented environment variables in a `.env` file, as
 this may be useful, e.g. for use with PyCharm's [EnvFile][envfile] plugin to use environment variables with PyCharm run
