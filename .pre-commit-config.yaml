@@ -1,20 +1,30 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
--   repo: https://gitlab.com/pycqa/flake8
-    rev: master
+  - repo: local
     hooks:
     -   id: flake8
--   repo: https://github.com/Yelp/detect-secrets
-    rev: v0.13.1
-    hooks:
+        name: flake8
+        entry: flake8
+        language: system
+        types: [python]
+        require_serial: true
     -   id: detect-secrets
+        name: Detect secrets
+        entry: detect-secrets-hook
+        language: system
         args: ['--baseline', '.secrets.baseline']
         exclude: .*/tests/.*
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.4.0
-    hooks:
     -   id: check-added-large-files
+        name: Check for added large files
+        entry: check-added-large-files
+        language: system
         args: ['--maxkb=5120']
     -   id: end-of-file-fixer
+        name: Fix End of Files
+        entry: end-of-file-fixer
+        language: system
     -   id: trailing-whitespace
+        name: Trim Trailing Whitespace
+        entry: trailing-whitespace-fixer
+        language: system
