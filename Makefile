@@ -8,6 +8,7 @@ dotenv:
 
 ## Install the Python requirements, and set up pre-commit hooks
 requirements:
+	python3 -m pip install -U pip setuptools
 	python3 -m pip install -r requirements.txt
 	pre-commit install
 
