@@ -1,12 +1,11 @@
 coverage==7.2.7
+detect-secrets==1.4.0
+flake8==6.1.0
 Flask==2.3.2
-requests==2.31.0
+pre-commit==3.3.3
+pre-commit-hooks==4.4.0
 pytest==7.4.0
 pytest-mock==3.11.1
 pytest-xdist==3.3.1
+requests==2.31.0
 Werkzeug==2.3.6
-detect-secrets==1.4.0
-flake8==6.1.0
-hypothesis==6.82.0
-pre-commit==3.3.3
-pre-commit-hooks==4.4.0
