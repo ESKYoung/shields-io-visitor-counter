@@ -20,9 +20,11 @@ If you've used [Shields.IO][shields-io] before, it's really straightforward! Let
 [octocat/Spoon-Knife][spoon-knife] GitHub repository as an example.
 
 To create a counter with all default options, add the `page` argument with your `username.repo` to the application URL:
+
 ```
 https://shields-io-visitor-counter.herokuapp.com/badge?page=octocat.Spoon-Knife
 ```
+
 to get this:
 
 ![Default counter](images/default_counter.svg)
@@ -57,12 +59,12 @@ All in all, the previous URL becomes:
 ```
 https://shields-io-visitor-counter.herokuapp.com/badge?page=octocat.Spoon-Knife&label=My First Counter&labelColor=000000&logo=GitHub&logoColor=FFFFFF&color=1D70B8&style=for-the-badge
 ```
+
 which gives us:
 
 ![Custom counter](images/custom_counter.svg)
 
 Note we used hex colours in the URL, but [Shields.IO][shields-io] also supports (some) colours by name!
-
 
 ## Caveats
 

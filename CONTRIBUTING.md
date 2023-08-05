@@ -71,7 +71,7 @@ section for further details.
 Here are the definitions for the environment variables found in [`.envrc`](./.envrc):
 
 | Name                       | Description                                                                                                                                                                               |
-| :------------------------- |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `DEFAULT_SHIELDS_IO_LABEL` | Default label text to use if the `label` parameter isn't supplied by the user.                                                                                                            |
 | `DEFAULT_SHIELDS_IO_COLOR` | Default message background colour if the `color` parameter isn't supplied by the user.                                                                                                    |
 | `GITHUB_REPOSITORY`        | Default URL to redirect if a user goes to the application [home page][application].                                                                                                       |

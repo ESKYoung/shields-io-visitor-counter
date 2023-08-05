@@ -1,6 +1,14 @@
+import os
 from datetime import timedelta
 from http import HTTPStatus
+from typing import Any, Dict, Optional, Union
+from unittest.mock import MagicMock
+from urllib.parse import SplitResult, urlsplit
+
+import pytest
 from flask import render_template, request
+from pytest_mock import MockerFixture
+
 from main import (
     app,
     combine_url_and_query,
@@ -10,19 +18,14 @@ from main import (
     get_page_hash,
     redirect_to_github_repository,
 )
-from typing import Any, Dict, Union
-from unittest.mock import MagicMock
-from urllib.parse import SplitResult, urlsplit
-import os
-import pytest
 
 # Import environmental variables
-DEFAULT_SHIELDS_IO_LABEL = os.getenv("DEFAULT_SHIELDS_IO_LABEL")
-DEFAULT_SHIELDS_IO_COLOR = os.getenv("DEFAULT_SHIELDS_IO_COLOR")
-GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
-HTML_CRON = os.getenv("HTML_CRON")
-URL_COUNTAPI = os.getenv("URL_COUNTAPI").rstrip("/")
-URL_SHIELDS_IO = os.getenv("URL_SHIELDS_IO").rstrip("/")
+DEFAULT_SHIELDS_IO_LABEL = os.environ["DEFAULT_SHIELDS_IO_LABEL"]
+DEFAULT_SHIELDS_IO_COLOR = os.environ["DEFAULT_SHIELDS_IO_COLOR"]
+GITHUB_REPOSITORY = os.environ["GITHUB_REPOSITORY"]
+HTML_CRON = os.environ["HTML_CRON"]
+URL_COUNTAPI = os.environ["URL_COUNTAPI"].rstrip("/")
+URL_SHIELDS_IO = os.environ["URL_SHIELDS_IO"].rstrip("/")
 
 
 class TestRedirectToGithubRepository:
@@ -68,7 +71,7 @@ args_test_get_page_hash_returns_correctly = [
     args_test_get_page_hash_returns_correctly,
 )
 def test_get_page_hash_returns_correctly(
-    mocker,
+    mocker: MockerFixture,
     test_input_page: str,
     test_input_hash: str,
     test_expected: str,
@@ -140,18 +143,18 @@ def mock_requests_get(*args: Any) -> object:
     """
 
     class MockResponse:
-        def __init__(self, json_data, status_code):
+        def __init__(self, json_data: Optional[Dict[str, Any]], status_code: int):
             """Mock the attributes, and json method of ``requests.get function``.
 
             Args:
-                json_data: A mock JSON return.
-                status_code: A mock HTTP status code.
+                json_data (Dict[str, Any]): A mock JSON return.
+                status_code (int): A mock HTTP status code.
 
             """
             self.json_data = json_data
             self.status_code = status_code
 
-        def json(self):
+        def json(self) -> Optional[Dict[str, Any]]:
             """Mock the json method of the ``requests.get`` function.
 
             Returns:
@@ -246,7 +249,7 @@ class TestGetShieldsIoBadge:
     @pytest.mark.parametrize("test_input_query", [{}, {"hello": "world"}])
     def test_request_arguments_defaults_set(
         self,
-        mocker,
+        mocker: MockerFixture,
         test_input_query: Dict[str, Any],
     ) -> None:
         """Test default values are set if label and color not in the query string."""
@@ -263,7 +266,7 @@ class TestGetShieldsIoBadge:
         # Assert `compile_shields_io_url` is called with default arguments for the
         # label, and color arguments
         patch_compile_shields_io_url.assert_called_once_with(
-            message=patch_get_page_count.return_value,
+            message=str(patch_get_page_count.return_value),
             label=DEFAULT_SHIELDS_IO_LABEL,
             color=DEFAULT_SHIELDS_IO_COLOR,
             **test_input_query,
@@ -274,7 +277,10 @@ class TestGetShieldsIoBadge:
         [("foo", {"hello": "world"})],
     )
     def test_get_page_count_not_called_if_message_in_request_arguments(
-        self, mocker, test_input_message: str, test_input_query: Dict[str, Any]
+        self,
+        mocker: MockerFixture,
+        test_input_message: str,
+        test_input_query: Dict[str, Any],
     ) -> None:
         """Test ``get_page_count`` not called if message is in the request arguments."""
         # Patch the `get_page_count` function
@@ -294,7 +300,10 @@ class TestGetShieldsIoBadge:
         [("foo", {"hello": "world"})],
     )
     def test_assertionerror_handling_if_message_in_request_arguments(
-        self, mocker, test_input_message: str, test_input_query: Dict[str, Any]
+        self,
+        mocker: MockerFixture,
+        test_input_message: str,
+        test_input_query: Dict[str, Any],
     ) -> None:
         """Test error message and label returned if message is in request arguments."""
         # Patch the `get_page_count`, and `compile_shields_io_url` functions
@@ -325,7 +334,7 @@ class TestGetShieldsIoBadge:
     )
     def test_get_page_hash_called_correctly(
         self,
-        mocker,
+        mocker: MockerFixture,
         test_input_page: str,
         test_input_query: Dict[str, Any],
     ) -> None:
@@ -348,7 +357,7 @@ class TestGetShieldsIoBadge:
     )
     def test_get_page_count_called_correctly(
         self,
-        mocker,
+        mocker: MockerFixture,
         test_input_page: str,
         test_input_query: Dict[str, Any],
     ) -> None:
@@ -370,7 +379,7 @@ class TestGetShieldsIoBadge:
 
     @pytest.mark.parametrize("test_input_query", [{"hello": "world"}])
     def test_get_page_count_not_called_if_page_not_in_request_arguments(
-        self, mocker, test_input_query: dict
+        self, mocker: MockerFixture, test_input_query: Dict[str, Any]
     ) -> None:
         """Test ``get_page_count`` not called if page not in the request."""
         # Patch the `get_page_count` function
@@ -389,7 +398,7 @@ class TestGetShieldsIoBadge:
     @pytest.mark.parametrize("test_input_query", [{"hello": "world"}])
     def test_keyerror_handling_if_page_not_in_request_arguments(
         self,
-        mocker,
+        mocker: MockerFixture,
         test_input_query: Dict[str, Any],
     ) -> None:
         """Test error message and label are produced if page is not in request."""
@@ -422,7 +431,7 @@ class TestGetShieldsIoBadge:
     )
     def test_assertionerror_handling_if_get_page_count_fails(
         self,
-        mocker,
+        mocker: MockerFixture,
         test_input_page: str,
         test_input_query: Dict[str, Any],
     ) -> None:
@@ -452,7 +461,7 @@ class TestGetShieldsIoBadge:
     @pytest.mark.parametrize("test_input_query", [{"hello": "world"}])
     def test_exception_handling_from_get_page_hash(
         self,
-        mocker,
+        mocker: MockerFixture,
         test_input_query: Dict[str, Any],
     ) -> None:
         """Test other exception handling by ``get_page_hash`` raises a 500 code."""
@@ -475,7 +484,7 @@ class TestGetShieldsIoBadge:
     @pytest.mark.parametrize("test_input_query", [{"hello": "world"}])
     def test_exception_handling_from_get_page_count(
         self,
-        mocker,
+        mocker: MockerFixture,
         test_input_query: Dict[str, Any],
     ) -> None:
         """Test other exception handling by ``get_page_count`` raises a 500 status."""
@@ -500,11 +509,11 @@ class TestGetShieldsIoBadge:
     )
     def test_compile_shields_io_url_called_correctly(
         self,
-        mocker,
+        mocker: MockerFixture,
         test_input_page: str,
         test_input_label: str,
         test_input_color: str,
-        test_input_query: dict,
+        test_input_query: Dict[str, Any],
     ) -> None:
         """Test compile_shields_io_url is called correctly."""
         # Patch the `get_page_hash`, `get_page_count`, and `compile_shields_io_url`
@@ -526,7 +535,7 @@ class TestGetShieldsIoBadge:
 
         # Assert `compile_shields_io_url` is called with the correct arguments
         patch_compile_shields_io_url.assert_called_once_with(
-            message=patch_get_page_count.return_value,
+            message=str(patch_get_page_count.return_value),
             label=test_input_label,
             color=test_input_color,
             **test_input_query,
@@ -537,7 +546,10 @@ class TestGetShieldsIoBadge:
         [("foo", {"hello": "world"})],
     )
     def test_requests_get_is_called_correctly(
-        self, mocker, test_input_page: str, test_input_query: dict
+        self,
+        mocker: MockerFixture,
+        test_input_page: str,
+        test_input_query: Dict[str, Any],
     ) -> None:
         """Test ``requests.get`` function is called correctly."""
         # Patch the `get_page_count`, `compile_shields_io_url`, and `requests.get`
@@ -561,7 +573,10 @@ class TestGetShieldsIoBadge:
         [("foo", {"hello": "world"})],
     )
     def test_flask_response_is_called_correctly(
-        self, mocker, test_input_page: str, test_input_query: dict
+        self,
+        mocker: MockerFixture,
+        test_input_page: str,
+        test_input_query: Dict[str, Any],
     ) -> None:
         """Test ``flask.Response`` class is called correctly."""
         # Patch the `get_page_count`, and `requests.get` functions, and the
