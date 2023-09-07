@@ -19,14 +19,11 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Load environment variables
-        run: source .envrc
-
       - name: Install dependencies
         run: make requirements
 
       - name: Run code coverage
-        run: coverage run -m pytest && coverage xml
+        run: source .envrc && coverage run -m pytest && coverage xml
 
       - name: Upload coverage to codecov
         if: ${{ !env.ACT }}
