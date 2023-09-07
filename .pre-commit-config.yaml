@@ -3,28 +3,76 @@
 repos:
   - repo: local
     hooks:
-    -   id: flake8
-        name: flake8
+      # Secrets detection
+      - id: detect-secrets
+        name: detect-secrets — secrets detection
+        entry: detect-secrets-hook
+        language: system
+        args: ["--baseline", ".secrets.baseline"]
+
+      # Python code formatting, typing, linting, and vulnerability checks
+      - id: black
+        name: black — Python code formatter (auto-fix)
+        entry: black
+        language: system
+        types: [python]
+        require_serial: true
+      - id: flake8
+        name: flake8 — PEP8 linter
         entry: flake8
         language: system
         types: [python]
         require_serial: true
-    -   id: detect-secrets
-        name: Detect secrets
-        entry: detect-secrets-hook
+      - id: isort
+        name: isort — sort Python imports (auto-fix)
+        entry: isort
         language: system
-        args: ['--baseline', '.secrets.baseline']
-        exclude: .*/tests/.*
-    -   id: check-added-large-files
-        name: Check for added large files
-        entry: check-added-large-files
+        types: [python]
+        require_serial: true
+      - id: mypy
+        name: mypy — static Python typing
+        entry: mypy
         language: system
-        args: ['--maxkb=5120']
-    -   id: end-of-file-fixer
-        name: Fix End of Files
+        types: [python]
+        args: ["--ignore-missing-imports", "--scripts-are-modules"]
+        require_serial: true
+      - id: safety
+        name: safety — check for security vulnerabilities in Python packages
+        entry: safety check
+        language: system
+        pass_filenames: false
+        args: ["--bare"]
+
+      # General code formatting
+      - id: end-of-file-fixer
+        name: Fix blank lines at end of files (auto-fix)
         entry: end-of-file-fixer
         language: system
-    -   id: trailing-whitespace
-        name: Trim Trailing Whitespace
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
         entry: trailing-whitespace-fixer
         language: system
+
+      # Other checks
+      - id: check-added-large-files
+        name: Check for added large files (500+ kb)
+        entry: check-added-large-files
+        language: system
+      - id: check-toml
+        name: Check TOML files syntax
+        entry: check-toml
+        language: system
+        types: [toml]
+      - id: check-yaml
+        name: Check YAML files syntax
+        entry: check-yaml
+        language: system
+        types: [yaml]
+
+  # Code formatting
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.7.1
+    hooks:
+      - id: prettier
+        name: prettier — code formatting for various languages (auto-fix)
+        exclude: "^templates/cron\\.html$"

@@ -1,0 +1,35 @@
+name: "Run tests, and code coverage"
+
+on: [pull_request]
+
+jobs:
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout the revision
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: make requirements
+
+      - name: Run code coverage
+        run: source .envrc && coverage run -m pytest && coverage xml
+
+      - name: Upload coverage to codecov
+        if: ${{ !env.ACT }}
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: true
+          verbose: true

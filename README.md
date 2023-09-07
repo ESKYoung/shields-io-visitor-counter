@@ -1,9 +1,13 @@
 # Shields.IO Visitor Counter
 
+> **Warning**
+>
+> This project has been archived (September 2023), as its CountAPI dependency no longer works. See
+> [pinned issue #17 for further details](https://github.com/ESKYoung/shields-io-visitor-counter/issues/17).
+
 [![GPL-3.0](https://img.shields.io/github/license/ESKYoung/shields-io-visitor-counter?logo=GNU&logoColor=FFFFFF&style=flat-square)](https://github.com/ESKYoung/shields-io-visitor-counter/blob/main/LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/ESKYoung/shields-io-visitor-counter?logo=GitHub&logoColor=FFFFFF&style=flat-square)](https://github.com/ESKYoung/shields-io-visitor-counter)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-3776AB?logo=Python&logoColor=FFFFFF&style=flat-square)](https://www.python.org/)
-[![Travis CI](https://img.shields.io/travis/com/ESKYoung/shields-io-visitor-counter/main?logo=Travis%20CI&logoColor=FFFFFF&style=flat-square)](https://travis-ci.com/github/ESKYoung/shields-io-visitor-counter)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-3776AB?logo=Python&logoColor=FFFFFF&style=flat-square)](https://www.python.org/)Ÿ
 [![Codecov](https://img.shields.io/codecov/c/github/ESKYoung/shields-io-visitor-counter/main?logo=Codecov&logoColor=FFFFFF&style=flat-square)](https://codecov.io/gh/ESKYoung/shields-io-visitor-counter)
 [![Visitor count](https://shields-io-visitor-counter.herokuapp.com/badge?page=ESKYoung.shields-io-visitor-counter&color=1D70B8&logo=GitHub&logoColor=FFFFFF&style=flat-square)](https://github.com/ESKYoung/shields-io-visitor-counter)
 
@@ -20,9 +24,11 @@ If you've used [Shields.IO][shields-io] before, it's really straightforward! Let
 [octocat/Spoon-Knife][spoon-knife] GitHub repository as an example.
 
 To create a counter with all default options, add the `page` argument with your `username.repo` to the application URL:
+
 ```
 https://shields-io-visitor-counter.herokuapp.com/badge?page=octocat.Spoon-Knife
 ```
+
 to get this:
 
 ![Default counter](images/default_counter.svg)
@@ -57,12 +63,12 @@ All in all, the previous URL becomes:
 ```
 https://shields-io-visitor-counter.herokuapp.com/badge?page=octocat.Spoon-Knife&label=My First Counter&labelColor=000000&logo=GitHub&logoColor=FFFFFF&color=1D70B8&style=for-the-badge
 ```
+
 which gives us:
 
 ![Custom counter](images/custom_counter.svg)
 
 Note we used hex colours in the URL, but [Shields.IO][shields-io] also supports (some) colours by name!
-
 
 ## Caveats
 
