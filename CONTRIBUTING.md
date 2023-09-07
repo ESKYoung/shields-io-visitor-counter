@@ -60,7 +60,7 @@ information.
 The entire application can be found in [`main.py`](./main.py), with its associated tests in the [`tests`](./tests)
 folder; tests are executed using [pytest][pytest]
 
-Travis CI deployment is managed by the [`.travis.yml`](./.travis.yml) file — see the [Deployment](#deployment)
+Deployment is automatically managed by Heroku on pushes to the `main` branch — see the [Deployment](#deployment)
 section for further details.
 
 The application uses environment variables extensively — see the [Environment variables](#environment-variables)
@@ -96,11 +96,9 @@ make dotenv
 ## Deployment
 
 This application is deployed on Heroku at [https://shields-io-visitor-counter.herokuapp.com][application]
-automatically by Travis CI. You can view previous builds [here][travis-ci].
+automatically on pushes to the `main` branch, and once GitHub Actions CI checks are complete.
 
-By default, Travis CI will only deploy commits with Git tags. We work on the assumption that tags are also releases, so
-Git tags are only applied for releases, and vice versa. Tags/releases are named according to [semantic
-versioning][semver].
+Pushes to main should be tagged/released, and named according to [semantic versioning][semver].
 
 [application]: https://shields-io-visitor-counter.herokuapp.com
 [detect-secrets]: https://github.com/Yelp/detect-secrets
@@ -109,4 +107,3 @@ versioning][semver].
 [pytest]: https://docs.pytest.org/
 [semver]: https://semver.org/
 [support]: mailto:eskyoung.github@gmail.com?subject=Support
-[travis-ci]: https://travis-ci.com/github/ESKYoung/shields-io-visitor-counter
